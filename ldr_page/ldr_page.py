@@ -270,7 +270,7 @@ def sub1(pat, rep, s, flags=re.S):
     return out
 
 
-def build(run, page, figdir, real=None, realdir=None):
+def build(run, page, figdir, real=None, realdir=None, embed=False):
     pts = run["pts"]
     cor = [p for p in pts if p["corner"] != "Nominal"]
     nom = next((p for p in pts if p["corner"] == "Nominal"), None)
@@ -289,9 +289,15 @@ def build(run, page, figdir, real=None, realdir=None):
         f = os.path.join(figdir, name)
         if not os.path.isfile(f):
             sys.exit("ldr_page: %s is missing; run with --viva to export it" % f)
-        b64 = base64.b64encode(open(f, "rb").read()).decode()
         return ('<a href="figs/%s" title="Open the full-size export"><img class="realimg" alt="%s" '
-                'src="data:image/png;base64,%s"></a>' % (name, html.escape(alt), b64))
+                'src="%s"></a>' % (name, html.escape(alt), src_of(f, name)))
+
+    def src_of(f, name):
+        """Linked figs/<name> keeps the page small (GitHub will not display files over ~1 MB);
+        --embed inlines the PNG for a single self-contained file."""
+        if embed:
+            return "data:image/png;base64," + base64.b64encode(open(f, "rb").read()).decode()
+        return "figs/" + name
 
     # -- real data for the page script: #8 chart and kp rows, section 4 table
     def kp_row(label, key, unit, dp):
@@ -341,12 +347,12 @@ def build(run, page, figdir, real=None, realdir=None):
 
     def card(cid, info):
         f = os.path.join(realdir, info["file"])
-        b64 = base64.b64encode(open(f, "rb").read()).decode()
+        src = src_of(f, info["file"])
         return ('<div class="card real" style="grid-column:1/-1"><div class="cap">Figure ${FIG++} · %s '
                 '<span class="chip pass">Cadence result</span></div><a href="figs/%s" title="Open the full-size '
-                'export"><img class="realimg" alt="%s" src="data:image/png;base64,%s"></a><div class="leg"><span>'
+                'export"><img class="realimg" alt="%s" src="%s" loading="lazy"></a><div class="leg"><span>'
                 'Spectre on the ADE netlist of %s, exported from Virtuoso Visualization</span></div></div>'
-                % (html.escape(info["title"]), info["file"], html.escape(info["title"]), b64, html.escape(cell_name)))
+                % (html.escape(info["title"]), info["file"], html.escape(info["title"]), src, html.escape(cell_name)))
 
     def kp_html(rows):
         lab = {"pass": "Pass", "warn": "Marginal", "fail": "Fail", "info": "Info", "na": "Not valid"}
@@ -499,6 +505,7 @@ def main():
     ap.add_argument("--page", default=PAGE_URL, help="page to start from: file or URL (default: the published page)")
     ap.add_argument("--viva", action="store_true", help="export the figures from ViVA first (needs virtuoso)")
     ap.add_argument("--real", help="real.json from ldr_run.py; its figures replace the other placeholders")
+    ap.add_argument("--embed", action="store_true", help="inline the PNGs (one self-contained file, ~6 MB)")
     a = ap.parse_args()
 
     run = read_run(a.rdb)
@@ -516,7 +523,7 @@ def main():
             os.makedirs(figdir, exist_ok=True)
             for f in os.listdir(realdir):
                 shutil.copy(os.path.join(realdir, f), os.path.join(figdir, f))
-        fh.write(build(run, page, figdir, real, realdir))
+        fh.write(build(run, page, figdir, real, realdir, a.embed))
     print("ldr_page: wrote file://%s" % os.path.abspath(outf))
 
 

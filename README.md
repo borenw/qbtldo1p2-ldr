@@ -5,7 +5,8 @@ Low-level design review of `myLib/QbtLdo1p2` against the 15-check LDO LDR page
 Simulated in a 0.18 µm process with the foundry PDK models; PDK names, model files and paths are
 kept out of this repo (put yours in `ldr_page/ldr_config.local.json`, which is not committed).
 
-**Open the page:** `ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html`
+**Open the page:** https://borenw.github.io/qbtldo1p2-ldr/ (source: `ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html`,
+figures in `ldr_page/out/figs/`; `ldr_page.py --embed` makes a single self-contained file instead)
 (same layout as the public page; every figure tagged *Cadence result* is real, anything stamped
 PLACEHOLDER is still the page's illustrative model).
 
