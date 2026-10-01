@@ -1,0 +1,88 @@
+{
+  "ade_netlist": "/home/usr1/bw4375/simulation/myLib/tb_QbtLdo1p2_LoadReg/adexl/results/data/Interactive.1/1/LDO_LoadReg/netlist/input.scs",
+  "dut_cell": "QbtLdo1p2",
+  "dut_inst": "I0 (0 LDOFBR VIN VOUT VREF VREF) {cell}",
+  "vin_typ": 3.3,
+  "vin_tol": 0.1,
+  "temps": [
+    -40,
+    25,
+    125
+  ],
+  "vout_nom": 1.8,
+  "iload_min": 1e-05,
+  "iload_max": 0.005,
+  "iload_typ": 0.001,
+  "cout": "100p",
+  "resr": "100m",
+  "process": {
+    "TT": {
+      "tt": "tt"
+    },
+    "SS": {
+      "tt": "ss"
+    },
+    "FF": {
+      "tt": "ff"
+    },
+    "SF": {
+      "tt": "sf"
+    },
+    "FS": {
+      "tt": "fs"
+    }
+  },
+  "mismatch_sections": [],
+  "mc_runs": 500,
+  "specs": {
+    "dc_gain_db": 60,
+    "pm_deg": 45,
+    "gm_db": 10,
+    "ugf_max_mhz": 5,
+    "vdo_max_mv": 200,
+    "ilim_min_x": 1.3,
+    "ilim_max_x": 2.3,
+    "load_step_pct": 3,
+    "line_step_pct": 1,
+    "psrr_mask": [
+      [
+        10,
+        60
+      ],
+      [
+        1000.0,
+        60
+      ],
+      [
+        1000.0,
+        40
+      ],
+      [
+        100000.0,
+        40
+      ],
+      [
+        100000.0,
+        20
+      ],
+      [
+        1000000.0,
+        20
+      ]
+    ],
+    "tss_max_ms": 1,
+    "tss_min_ms": 0,
+    "startup_os_pct": 2,
+    "inrush_max_ma": 20,
+    "vref_tol_pct": 1.5,
+    "vos_3sigma_mv": 4,
+    "cpk_min": 1.33,
+    "iq_max_ua": 50,
+    "eta_min_pct": 90,
+    "irev_max_ua": 10,
+    "tsd_min_c": 150,
+    "tsd_max_c": 170,
+    "vn_max_uvrms": 50
+  },
+  "mismatch_suffix": ""
+}

@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+viva_export.log
+.cadence/
+ldr_config.local.json

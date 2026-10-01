@@ -1,0 +1,47 @@
+diff --git a/ldo_loadreg_setup.il b/ldo_loadreg_setup.il
+index c8a355b..6108bc4 100644
+--- a/ldo_loadreg_setup.il
++++ b/ldo_loadreg_setup.il
+@@ -38,7 +38,7 @@ let((
+     (VOUT_NOM     "1.2")
+     (ILOAD_MIN    "1m")
+     (ILOAD_MAX    "300m")
+-    (NPTS         "31")
++    (NPTS         "31")         ; number of steps; the sweep has NPTS+1 points
+     (SPEC_LOADREG "20")         ; load regulation, mV/A, max
+     (SPEC_ERR     "1.5")        ; VOUT error over load, %, max
+     (RUN          t)            ; t = set up and run, nil = set up only
+@@ -48,7 +48,7 @@ let((
+   ;; ---------- open the setup ----------
+   sess = maeOpenSetup(LIB CELL VIEW ?mode "a")
+   unless(sess
+-    error("ldo_loadreg: cannot open %s/%s/%s for editing. Close it in the GUI and retry.\n"
++    error("ldo_loadreg: cannot open %s/%s/%s for editing. Close it in the GUI and retry. A legacy ADE XL view (data.sdb) cannot be opened by mae* (ASSEMBLER-8036); use an ADE Assembler (maestro) view.\n"
+           LIB CELL VIEW))
+   when(member(TEST maeGetSetup(?session sess))
+     error("ldo_loadreg: test %s already exists. Change TEST or delete that test first.\n" TEST))
+@@ -60,8 +60,13 @@ let((
+   maeSetVar(ILOAD_VAR  ILOAD_MIN ?session sess)
+ 
+   ;; ---------- DC sweep of the load current ----------
+-  dcOpts = `(("saveOppoint" t) ("param" ,ILOAD_VAR)
+-             ("start" ,ILOAD_MIN) ("stop" ,ILOAD_MAX) ("lin" ,NPTS))
++  ;; "sweep"/"designVar" make it a design-variable sweep, and "incrType" plus
++  ;; "stepTypeLin" make "lin" a step count. Without them ADE stores the keys but
++  ;; netlists a bare op point (no param=/start=/stop= on the dc line).
++  dcOpts = `(("saveOppoint" t) ("sweep" "Design Variable")
++             ("designVar" ,ILOAD_VAR) ("param" ,ILOAD_VAR)
++             ("rangeType" "Start-Stop") ("start" ,ILOAD_MIN) ("stop" ,ILOAD_MAX)
++             ("incrType" "Linear") ("stepTypeLin" "Number of Steps") ("lin" ,NPTS))
+   ;; argument order changed between releases, so try both forms
+   ok = errset(maeSetAnalysis(TEST "dc" ?enable t ?options dcOpts ?session sess))
+   unless(ok && car(ok)
+@@ -82,7 +87,7 @@ let((
+     list("load_reg_mV_per_A" sprintf(nil "1000*(value(%s %s) - value(%s %s))/(%s - %s)"
+                                      vs ILOAD_MIN vs ILOAD_MAX ILOAD_MAX ILOAD_MIN)
+                              "lt" SPEC_LOADREG)
+-    list("VOUT_err_pct"      sprintf(nil "100*ymax(abs(%s - VOUT_NOM))/VOUT_NOM" vs)
++    list("VOUT_err_pct"      sprintf(nil "100*ymax(abs(%s - VAR(\"VOUT_NOM\")))/VAR(\"VOUT_NOM\")" vs)
+                              "lt" SPEC_ERR)
+     list("headroom_V"        sprintf(nil "value(%s - %s %s)" vp vs ILOAD_MAX) nil nil))
+   foreach(o outs

@@ -1,0 +1,46 @@
+;; Build myLib/tb_QbtLdo1p2_LoadReg/schematic: QbtLdo1p2 + vin source + iload sink + Cout/ESR
+LIB = "myLib"  CELL = "tb_QbtLdo1p2_LoadReg"
+procedure(tbStub(cv inst termName netName dir)
+  let((m pin bb c x0 y0 p1 p2 w)
+    m = inst~>master
+    pin = car(car(setof(tt m~>terminals tt~>name==termName))~>pins)
+    bb = pin~>fig~>bBox
+    c = centerBox(bb)
+    x0 = xCoord(inst~>xy) + xCoord(c)  y0 = yCoord(inst~>xy) + yCoord(c)
+    p1 = x0:y0
+    p2 = case(dir ("L" (x0-0.25):y0) ("R" (x0+0.25):y0) ("U" x0:(y0+0.25)) ("D" x0:(y0-0.25)))
+    w = car(schCreateWire(cv "draw" "full" list(p1 p2) 0.0625 0.0 0.0))
+    schCreateWireLabel(cv w p2 netName "centerCenter" "R0" "stick" 0.0625 nil)
+    printf("stub %s.%s -> %s at %L\n" inst~>name termName netName p1)))
+procedure(tbPlace(cv lib cell name xy)
+  dbCreateInst(cv dbOpenCellViewByType(lib cell "symbol") name xy "R0"))
+
+cv = dbOpenCellViewByType(LIB CELL "schematic" "schematic" "w")
+dut = tbPlace(cv "myLib" "QbtLdo1p2" "I0" 0:0)
+bb = dut~>master~>bBox  printf("DUT bbox %L\n" bb)
+cx = xCoord(centerBox(bb))
+foreach(tm dut~>master~>terminals
+  let((c) c = centerBox(car(tm~>pins)~>fig~>bBox)
+    tbStub(cv dut tm~>name
+      cond((tm~>name=="VDBR_IN" "VIN") (tm~>name=="VDD_1V8" "VOUT") (tm~>name=="GND" "gnd!")
+           (tm~>name=="VREF0V9_LDO_IN" "VREF") (tm~>name=="VREF0V9_LDO_OUT" "VREF") (1 "LDOFBR"))
+      if(xCoord(c) < cx "L" "R"))))
+v0 = tbPlace(cv "analogLib" "vdc" "V0" -4:0)
+dbReplaceProp(v0 "vdc" "string" "vin")
+tbStub(cv v0 "PLUS" "VIN" "U")  tbStub(cv v0 "MINUS" "gnd!" "D")
+i1 = tbPlace(cv "analogLib" "idc" "I1" 5:0)
+dbReplaceProp(i1 "idc" "string" "iload")
+tbStub(cv i1 "PLUS" "VOUT" "U")  tbStub(cv i1 "MINUS" "gnd!" "D")
+c0 = tbPlace(cv "analogLib" "cap" "C0" 7:0.5)
+dbReplaceProp(c0 "c" "string" "100p")
+tbStub(cv c0 "PLUS" "VOUT" "U")  tbStub(cv c0 "MINUS" "nesr" "D")
+r0 = tbPlace(cv "analogLib" "res" "R0" 7:-1)
+dbReplaceProp(r0 "r" "string" "100m")
+tbStub(cv r0 "PLUS" "nesr" "U")  tbStub(cv r0 "MINUS" "gnd!" "D")
+g0 = tbPlace(cv "analogLib" "gnd" "G0" -4:-2)
+tbStub(cv g0 "gnd!" "gnd!" "U")
+chk = schCheck(cv)  printf("schCheck %L\n" chk)
+dbSave(cv)
+foreach(n cv~>nets printf("NET %s: %L\n" n~>name mapcar(lambda((it) sprintf(nil "%s.%s" it~>inst~>name it~>name)) n~>instTerms)))
+dbClose(cv)
+hiQuit()

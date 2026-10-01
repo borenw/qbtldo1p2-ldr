@@ -1,0 +1,637 @@
+{
+ "1": {
+  "charts": {
+   "101": {
+    "file": "fig_101.png",
+    "title": "Loop gain magnitude, 45 PVT points × ILOAD {10 µA, 5 mA}"
+   },
+   "102": {
+    "file": "fig_102.png",
+    "title": "Loop gain phase (PM = phase at the UGF)"
+   }
+  },
+  "kp": [
+   {
+    "l": "Min DC loop gain",
+    "v": "-91.5 dB",
+    "c": "SS 2.97 V 125 °C · heavy",
+    "s": "≥ 60 dB",
+    "m": "-151.5 dB (-252%)",
+    "r": "fail"
+   },
+   {
+    "l": "Min phase margin",
+    "v": "60.2°",
+    "c": "FF 3.63 V 25 °C · light",
+    "s": "≥ 45°",
+    "m": "15.2° (34%)",
+    "r": "pass"
+   },
+   {
+    "l": "Min gain margin",
+    "v": "12.8 dB",
+    "c": "SS 3.63 V -40 °C · heavy",
+    "s": "≥ 10 dB",
+    "m": "2.8 dB (28%)",
+    "r": "pass"
+   },
+   {
+    "l": "Max UGF",
+    "v": "0.320 MHz",
+    "c": "FF 3.63 V -40 °C · heavy",
+    "s": "≤ 5 MHz",
+    "m": "4.680 MHz (94%)",
+    "r": "pass"
+   }
+  ],
+  "ade": [
+   [
+    "DC_gain",
+    "value(dB20(getData(\"loopGain\" ?result 'stb)) 1)"
+   ],
+   [
+    "UGF",
+    "cross(dB20(getData(\"loopGain\" ?result 'stb)) 0 1 \"falling\")"
+   ],
+   [
+    "PM",
+    "value(phaseDeg(getData(\"loopGain\" ?result 'stb)) cross(dB20(getData(\"loopGain\" ?result 'stb)) 0 1 \"falling\"))"
+   ],
+   [
+    "GM",
+    "-value(dB20(getData(\"loopGain\" ?result 'stb)) cross(phaseDeg(getData(\"loopGain\" ?result 'stb)) 0 1 \"falling\"))"
+   ]
+  ],
+  "setup": "stb 1 Hz to 1 GHz, probe = iprobe I0.IPRB0 inserted between the divider (LDOFBR) and the EA input (VFB) in a copy of the DUT. Spectre's loopGain phase starts at +180° for this loop, so PM is the phase at the UGF and GM is −|T| where the phase reaches 0°. Output 100p + 100m ESR. PVT × ILOAD {min, max}."
+ },
+ "2": {
+  "charts": {
+   "103": {
+    "file": "fig_103.png",
+    "title": "Dropout voltage vs load current, 15 process × temperature corners"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max VDO at 5 mA",
+    "v": "1,564.8 mV",
+    "c": "SS 3.30 V 125 °C",
+    "s": "≤ 200 mV",
+    "m": "-1,364.8 mV (-682%)",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "VDO",
+    "let((w r) w = v(\"VOUT\" ?result 'dc) r = value(w 3.63) cross(w 0.98*r 1 \"rising\") - 0.98*r)"
+   ],
+   [
+    "VREG",
+    "value(v(\"VOUT\" ?result 'dc) 3.63)"
+   ]
+  ],
+  "setup": "dc sweep vin 0.5 V to 3.63 V with a resistive load RL = VOUT_NOM / ILOAD, ILOAD = 500 µA, 1.25 mA, 2.5 mA, 3.75 mA, 5 mA; VDO = VIN − VOUT where VOUT has fallen to 98% of its value at 3.63 V. VIN is swept, so the corners are P × T."
+ },
+ "3": {
+  "charts": {
+   "104": {
+    "file": "fig_104.png",
+    "title": "IOUT vs forced VOUT, 45 PVT points (one panel per VIN)"
+   }
+  },
+  "kp": [
+   {
+    "l": "Min ILIM (peak IOUT)",
+    "v": "4.72 mA",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≥ 6.5 mA",
+    "m": "-1.78 mA (-27%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max ILIM (peak IOUT)",
+    "v": "12.06 mA",
+    "c": "FF 3.63 V -40 °C",
+    "s": "≤ 11.5 mA",
+    "m": "-0.56 mA (-5%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max short-circuit current",
+    "v": "12.06 mA",
+    "c": "FF 3.63 V -40 °C",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ],
+  "ade": [
+   [
+    "ILIM_peak",
+    "ymax(i(\"VF:p\" ?result 'dc))"
+   ],
+   [
+    "ISC",
+    "value(i(\"VF:p\" ?result 'dc) 0)"
+   ],
+   [
+    "I_90",
+    "value(i(\"VF:p\" ?result 'dc) 1.62)"
+   ]
+  ],
+  "setup": "dc sweep of a vsource VF forcing $DUT_OUTPUT from 0 to 1.98 V; IOUT = current the LDO drives into VF. ILIM window = 1.3× to 2.3× ILOAD max (5 mA)."
+ },
+ "4": {
+  "charts": {
+   "140": {
+    "file": "fig_140.png",
+    "title": "Stimulus, ILOAD 10 µA → 5 mA → 10 µA, 1 µs edges (TT 3.3 V 25 °C)"
+   },
+   "105": {
+    "file": "fig_105.png",
+    "title": "VOUT deviation from its pre-step value, 45 PVT points (one panel per VIN)"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max undershoot (load rise)",
+    "v": "4,584.9 mV",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≤ 54 mV",
+    "m": "-4,530.9 mV (-8390%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max overshoot (load release)",
+    "v": "4,585.5 mV",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≤ 54 mV",
+    "m": "-4,531.5 mV (-8392%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max settling to 1% after release",
+    "v": "24.83 µs",
+    "c": "SS 3.63 V 125 °C",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ],
+  "ade": [
+   [
+    "undershoot",
+    "value(v(\"VOUT\" ?result 'tran) 19u) - ymin(clip(v(\"VOUT\" ?result 'tran) 20u 60u))"
+   ],
+   [
+    "overshoot",
+    "ymax(clip(v(\"VOUT\" ?result 'tran) 60u 100u)) - value(v(\"VOUT\" ?result 'tran) 59u)"
+   ],
+   [
+    "t_settle",
+    "cross(abs(clip(v(\"VOUT\" ?result 'tran) 61u 100u) - value(v(\"VOUT\" ?result 'tran) 99u)) 0.018 1 \"falling\") - 61u"
+   ]
+  ],
+  "setup": "tran 0 to 100 µs, ILOAD pwl 10 µA → 5 mA at 20 µs and back at 60 µs, 1 µs edges; ΔVOUT is referred to each corner's own VOUT at 19 µs, because the DC error differs per corner."
+ },
+ "5": {
+  "charts": {
+   "106": {
+    "file": "fig_106.png",
+    "title": "PSRR vs frequency, ILOAD 5 mA, 45 PVT points (one panel per VIN)"
+   }
+  },
+  "kp": [
+   {
+    "l": "Min PSRR at 1 kHz",
+    "v": "-23.4 dB",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≥ 60 dB",
+    "m": "-83.4 dB (-139%)",
+    "r": "fail"
+   },
+   {
+    "l": "Min PSRR at 100 kHz",
+    "v": "-15.3 dB",
+    "c": "FS 2.97 V 125 °C",
+    "s": "≥ 40 dB",
+    "m": "-55.3 dB (-138%)",
+    "r": "fail"
+   },
+   {
+    "l": "Min PSRR at 1 MHz",
+    "v": "-8.3 dB",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≥ 20 dB",
+    "m": "-28.3 dB (-142%)",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "PSRR_1k",
+    "value((-dB20(v(\"VOUT\" ?result 'ac))) 1k)"
+   ],
+   [
+    "PSRR_100k",
+    "value((-dB20(v(\"VOUT\" ?result 'ac))) 100k)"
+   ],
+   [
+    "PSRR_1M",
+    "value((-dB20(v(\"VOUT\" ?result 'ac))) 1M)"
+   ]
+  ],
+  "setup": "ac 10 Hz to 10 MHz, acmag 1 on the $DUT_POWER source, ILOAD = 5 mA; PSRR = −dB20(VF(\"/$DUT_OUTPUT\"))."
+ },
+ "6": {
+  "charts": {
+   "160": {
+    "file": "fig_160.png",
+    "title": "Stimulus, VIN 2.97 → 3.63 → 2.97 V at 1 V/µs"
+   },
+   "107": {
+    "file": "fig_107.png",
+    "title": "VOUT deviation, VIN step at 1 V/µs, ILOAD 5 mA, 15 process × temperature corners"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max ΔVOUT on VIN rise",
+    "v": "4,582.37 mV",
+    "c": "SS 3.30 V 125 °C",
+    "s": "≤ 18 mV",
+    "m": "-4,564.37 mV (-25358%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max ΔVOUT on VIN fall",
+    "v": "4,582.84 mV",
+    "c": "SS 3.30 V 125 °C",
+    "s": "≤ 18 mV",
+    "m": "-4,564.84 mV (-25360%)",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "dV_up",
+    "ymax(clip(v(\"VOUT\" ?result 'tran) 20u 60u)) - value(v(\"VOUT\" ?result 'tran) 19u)"
+   ],
+   [
+    "dV_dn",
+    "value(v(\"VOUT\" ?result 'tran) 59u) - ymin(clip(v(\"VOUT\" ?result 'tran) 60u 100u))"
+   ]
+  ],
+  "setup": "tran 0 to 100 µs; $DUT_POWER source pwl 2.97 → 3.63 V at 20 µs and back at 60 µs, 1 V/µs; ILOAD = 5 mA. VIN is the stimulus, so the corners are P × T."
+ },
+ "7": {
+  "charts": {
+   "108": {
+    "file": "fig_108.png",
+    "title": "VOUT ramp at power-up, normalised to its final value, 45 PVT points"
+   },
+   "109": {
+    "file": "fig_109.png",
+    "title": "Input current at power-up"
+   }
+  },
+  "kp": [
+   {
+    "l": "Power-up temperature scan: failed starts",
+    "v": "2 of 642",
+    "c": "TT 3.3 V: -33,-32 °C",
+    "s": "0",
+    "m": "–",
+    "r": "fail"
+   },
+   {
+    "l": "Max start-up time (VIN at final → VOUT 90%)",
+    "v": "2.89 µs",
+    "c": "SS 2.97 V 125 °C",
+    "s": "≤ 1000 µs",
+    "m": "997.11 µs (100%)",
+    "r": "pass"
+   },
+   {
+    "l": "Max overshoot",
+    "v": "10.58%",
+    "c": "FF 3.63 V 125 °C",
+    "s": "≤ 2%",
+    "m": "-8.58% (-429%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max inrush current",
+    "v": "5.92 mA",
+    "c": "SF 3.63 V -40 °C",
+    "s": "≤ 20 mA",
+    "m": "14.08 mA (70%)",
+    "r": "pass"
+   }
+  ],
+  "ade": [
+   [
+    "t_ss",
+    "cross(v(\"VOUT\" ?result 'tran) 0.9*value(v(\"VOUT\" ?result 'tran) 1m) 1 \"rising\") - 20u"
+   ],
+   [
+    "overshoot_pct",
+    "(ymax(v(\"VOUT\" ?result 'tran)) - value(v(\"VOUT\" ?result 'tran) 1m))/value(v(\"VOUT\" ?result 'tran) 1m)*100"
+   ],
+   [
+    "I_inrush",
+    "ymax((-i(\"V0:p\" ?result 'tran)))"
+   ],
+   [
+    "VOUT_final",
+    "value(v(\"VOUT\" ?result 'tran) 1m)"
+   ]
+  ],
+  "setup": "This LDO has no EN pin, so start-up is a VIN ramp 0 → VIN over 10 µs (from 10 µs) into RL = 360 Ω (ILOAD max) + 100p; tran 0 to 1 ms. t_ss counts from VIN reaching its final value. A second scan powers up every process × VIN corner every 5 °C (TT 3.3 V every 1 °C) and records VOUT at 1 ms; a start fails when VOUT stays below half of VOUT_NOM (the reference latches at VIN).",
+  "extra": [
+   {
+    "file": "fig_108b.png",
+    "title": "Power-up temperature scan: VOUT 1 ms after VIN ramps, 642 runs, 2 failed starts"
+   }
+  ]
+ },
+ "8": {
+  "charts": {},
+  "kp": [
+   {
+    "l": "Max line regulation (VIN 2.97 → 3.63 V, ILOAD 1 mA)",
+    "v": "26.90 mV/V",
+    "c": "FF 3.30 V 125 °C",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ],
+  "ade": [
+   [
+    "line_reg_mV_per_V",
+    "(value(v(\"VOUT\" ?result 'dc) 3.63) - value(v(\"VOUT\" ?result 'dc) 2.97))/0.66*1e3"
+   ]
+  ],
+  "setup": "line_reg: dc sweep vin 2.97 to 3.63 V at ILOAD 1 mA, P × T corners."
+ },
+ "9": {
+  "charts": {
+   "111": {
+    "file": "fig_111.png",
+    "title": "VREF vs temperature, 15 process × VIN corners (no trim bus on this design)"
+   },
+   "112": {
+    "file": "fig_112.png",
+    "title": "VREF spread from mismatch, μ = 909.7 mV, σ = 15.79 mV (500 points)"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max VREF error over −40 to 125 °C",
+    "v": "20.63%",
+    "c": "FF 2.97 V",
+    "s": "≤ 1.5%",
+    "m": "-19.13% (-1276%)",
+    "r": "fail"
+   },
+   {
+    "l": "Worst VREF tempco (−40 to 125 °C)",
+    "v": "-1,465 ppm/°C",
+    "c": "FF 3.30 V",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ],
+  "ade": [
+   [
+    "VREF_m40",
+    "value(v(\"VREF\" ?result 'dc) -40)"
+   ],
+   [
+    "VREF_25",
+    "value(v(\"VREF\" ?result 'dc) 25)"
+   ],
+   [
+    "VREF_125",
+    "value(v(\"VREF\" ?result 'dc) 125)"
+   ],
+   [
+    "VREF_err_pct",
+    "ymax(abs(v(\"VREF\" ?result 'dc) - 0.9))/0.9*100"
+   ]
+  ],
+  "setup": "This design has no VREF trim input, so #9 shows the reference itself: dc sweep temp −40 to 125 °C, V(VREF0V9_LDO_OUT) at ILOAD 1 mA, process × VIN corners. Target 0.9 V ±1.5%.",
+  "extra_kp": [
+   {
+    "l": "VREF spread, μ ± 3σ (mismatch)",
+    "v": "909.7 ± 47.4 mV",
+    "c": "MC 500 pts, TT 3.30 V 25 °C",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ]
+ },
+ "11": {
+  "charts": {
+   "114": {
+    "file": "fig_114.png",
+    "title": "Quiescent current vs load, 45 PVT points (one panel per VIN)"
+   },
+   "115": {
+    "file": "fig_115.png",
+    "title": "Current efficiency vs load"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max IQ at no load (1 µA)",
+    "v": "3.69 µA",
+    "c": "FF 3.63 V -40 °C",
+    "s": "≤ 50 µA",
+    "m": "46.31 µA (93%)",
+    "r": "pass"
+   },
+   {
+    "l": "Min current efficiency at 1 mA",
+    "v": "99.63%",
+    "c": "FF 3.63 V -40 °C",
+    "s": "≥ 90%",
+    "m": "9.63% (11%)",
+    "r": "warn"
+   }
+  ],
+  "ade": [
+   [
+    "IQ_noload",
+    "value(((-i(\"V0:p\" ?result 'dc)) - xval((-i(\"V0:p\" ?result 'dc)))) 1u)"
+   ],
+   [
+    "IQ_1m",
+    "value(((-i(\"V0:p\" ?result 'dc)) - xval((-i(\"V0:p\" ?result 'dc)))) 1m)"
+   ],
+   [
+    "eta_1m",
+    "value((xval((-i(\"V0:p\" ?result 'dc)))/(-i(\"V0:p\" ?result 'dc))*100) 1m)"
+   ]
+  ],
+  "setup": "dc sweep iload, log, 1 µA to 5 mA; IQ = IIN − ILOAD, η = ILOAD / IIN."
+ },
+ "12": {
+  "charts": {
+   "116": {
+    "file": "fig_116.png",
+    "title": "Reverse current vs VOUT − VIN, VIN = 0 V, 15 process × temperature corners"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max IREV at VOUT = 1.8 V",
+    "v": "659,900.532 µA",
+    "c": "FF 3.30 V 125 °C",
+    "s": "≤ 10 µA",
+    "m": "-659,890.532 µA (-6598905%)",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "IREV",
+    "value((-i(\"VR:p\" ?result 'dc)) 1.8)"
+   ],
+   [
+    "IREV_max",
+    "ymax(abs((-i(\"VR:p\" ?result 'dc))))"
+   ]
+  ],
+  "setup": "VIN source at 0 V, vsource VR forces $DUT_OUTPUT from 0 to 1.8 V; IREV = current VR pushes into the LDO output. This LDO has no EN pin, so the EN on/off cases do not apply."
+ },
+ "13": {
+  "charts": {
+   "117": {
+    "file": "fig_117.png",
+    "title": "VOUT vs junction temperature, ILOAD 5 mA, 15 process × VIN corners"
+   }
+  },
+  "kp": [
+   {
+    "l": "TSD trip",
+    "v": "none up to 165 °C",
+    "c": "all 15 corners",
+    "s": "150 to 170 °C",
+    "m": "–",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "TSD_trip",
+    "cross(v(\"VOUT\" ?result 'dc) 0.5*value(v(\"VOUT\" ?result 'dc) 25) 1 \"falling\")"
+   ],
+   [
+    "VOUT_Tmax",
+    "value(v(\"VOUT\" ?result 'dc) 165)"
+   ]
+  ],
+  "setup": "dc sweep temp −40 to 165 °C at ILOAD 5 mA (static; no self-heating). The sweep stops at 165 °C because the model breaks above it (CMI-2434 at 168 °C: Vsat < 0 in I0.I8.M12). TSD_trip is where VOUT falls below half its 25 °C value; if no corner trips, this design has no thermal shutdown. The dip near −33 °C is not a shutdown: there the reference settles to a second operating point with VREF at VIN (see #7's power-up scan)."
+ },
+ "14": {
+  "charts": {
+   "118": {
+    "file": "fig_118.png",
+    "title": "Output noise density, ILOAD 1 mA, 45 PVT points"
+   },
+   "119": {
+    "file": "fig_119.png",
+    "title": "Integrated output noise from 10 Hz"
+   }
+  },
+  "kp": [
+   {
+    "l": "Max Vn, 10 Hz to 100 kHz",
+    "v": "807.7 µVrms",
+    "c": "SS 3.63 V 25 °C",
+    "s": "≤ 50 µVrms",
+    "m": "-757.7 µVrms (-1515%)",
+    "r": "fail"
+   },
+   {
+    "l": "Max Vn density at 1 kHz",
+    "v": "3,868 nV/√Hz",
+    "c": "SS 3.63 V -40 °C",
+    "s": "info",
+    "m": "–",
+    "r": "info"
+   }
+  ],
+  "ade": [
+   [
+    "Vn_rms",
+    "sqrt(integ(getData(\"out\" ?result 'noise)*getData(\"out\" ?result 'noise) 10 100k))"
+   ],
+   [
+    "Vn_1k",
+    "value(getData(\"out\" ?result 'noise) 1k)"
+   ],
+   [
+    "Vn_10k",
+    "value(getData(\"out\" ?result 'noise) 10k)"
+   ]
+  ],
+  "setup": "noise 10 Hz to 1 MHz, output VOUT referred to ground, ILOAD 1 mA."
+ },
+ "10": {
+  "charts": {
+   "113": {
+    "file": "fig_113.png",
+    "title": "EA input offset, μ = -2.46 mV, σ = 0.009 mV (500 Monte Carlo points, TT 3.30 V 25 °C)"
+   }
+  },
+  "kp": [
+   {
+    "l": "|μ| + 3σ",
+    "v": "2.49 mV",
+    "c": "MC 500 pts, TT 3.30 V 25 °C",
+    "s": "≤ 4 mV",
+    "m": "1.51 mV (38%)",
+    "r": "na"
+   },
+   {
+    "l": "Cpk",
+    "v": "59.51",
+    "c": "MC 500 pts",
+    "s": "≥ 1.33",
+    "m": "58.18 (4375%)",
+    "r": "na"
+   },
+   {
+    "l": "EA input pair mismatch model",
+    "v": "none (M1, M2)",
+    "c": "netlist",
+    "s": "devices with a mismatch model",
+    "m": "–",
+    "r": "fail"
+   }
+  ],
+  "ade": [
+   [
+    "Vos",
+    "VDC(\"/LDOFBR\") - VDC(\"/VREF\")"
+   ],
+   [
+    "VREF",
+    "VDC(\"/VREF\")"
+   ]
+  ],
+  "setup": "Monte Carlo, mismatch only (3 PDK mismatch sections), 500 points, seed 12345, at TT 3.30 V 25 °C, ILOAD 1 mA. The EA input pair uses device models that carry no mismatch model, so this run cannot see the EA offset: the μ is systematic offset and the σ is understated. Switch M1/M2 to the mismatch-enabled version of the device to get a real offset distribution."
+ },
+ "15": {
+  "charts": {},
+  "kp": [],
+  "ade": [],
+  "setup": "Not simulated on this install. Aging: Spectre's reliability analysis stops with SPECTRE-17074 (no aging model cards for any device in the PDK model file), so HCI/NBTI cannot be run. EM/IR needs a post-layout extraction of QbtLdo1p2 and an EMIR tool (Voltus-Fi or Calibre PERC), which are not set up. The charts below remain the page's illustrative model."
+ }
+}
