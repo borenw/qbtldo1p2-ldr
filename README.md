@@ -5,10 +5,18 @@ Low-level design review of `myLib/QbtLdo1p2` against the 15-check LDO LDR page
 Simulated in a 0.18 µm process with the foundry PDK models; PDK names, model files and paths are
 kept out of this repo (put yours in `ldr_page/ldr_config.local.json`, which is not committed).
 
-**Open the page:** https://borenw.github.io/qbtldo1p2-ldr/ (source: `ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html`,
-figures in `ldr_page/out/figs/`; `ldr_page.py --embed` makes a single self-contained file instead)
-(same layout as the public page; every figure tagged *Cadence result* is real, anything stamped
-PLACEHOLDER is still the page's illustrative model).
+## [▶ Open the rendered report](https://borenw.github.io/qbtldo1p2-ldr/)
+
+Same layout as the public LDR page: every figure tagged *Cadence result* is a real Spectre run exported
+from Virtuoso Visualization; anything stamped PLACEHOLDER is still the page's illustrative model (#15 only).
+
+**Jump to a check:** [#1 Stability](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c1) · [#2 Dropout](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c2) · [#3 Current limit](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c3) · [#4 Load transient](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c4) · [#5 PSRR](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c5) · [#6 Line transient](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c6) · [#7 Startup](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c7) · [#8 Accuracy and regulation](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c8) · [#9 VREF](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c9) · [#10 Offset Monte Carlo](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c10) · [#11 Quiescent current](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c11) · [#12 Reverse current](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c12) · [#13 Thermal shutdown](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c13) · [#14 Noise](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c14) · [#15 EM / IR and aging](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#c15) · [Load regulation, worked example](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#lr)
+
+[![VOUT vs ILOAD across 45 PVT points, exported from Virtuoso Visualization](ldr_page/out/figs/fig_loadreg_pvt.png)](https://borenw.github.io/qbtldo1p2-ldr/ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html#lr)
+
+Source of the page: `ldr_page/out/ldr_tb_QbtLdo1p2_LoadReg_Interactive.1.html`, figures in `ldr_page/out/figs/`
+(GitHub shows the HTML as source; use the link above to see it rendered). `ldr_page.py --embed` makes a
+single self-contained file instead.
 
 ## Regenerate
 
